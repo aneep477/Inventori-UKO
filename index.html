@@ -84,7 +84,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* CSS KHAS CETAKAN PDF */
+    /* CSS CETAKAN PDF RASMI IPG */
     @media print {
       body * {
         visibility: hidden !important;
@@ -237,7 +237,7 @@
               <p class="text-[10px] text-slate-400">Gambar dimampatkan automatik sebelum dihantar</p>
             </button>
 
-            <!-- PRATONTON GAMBAR BAHARU -->
+            <!-- PRATONTON GAMBAR -->
             <div id="imagePreviewGrid" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
           </div>
 
@@ -253,9 +253,9 @@
           <div class="w-10 h-10 clay-card-inner flex items-center justify-center text-emerald-700 mb-3">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <h3 class="text-sm font-black text-slate-900">Pengurusan Rekod & Edit</h3>
+          <h3 class="text-sm font-black text-slate-900">Pengurusan Rekod & Gambar</h3>
           <p class="text-xs text-slate-600 leading-relaxed mt-2">
-            Jika berlaku kesilapan ejaan, kuantiti, atau tarikh penerimaan, anda boleh menekan butang ✏️ <strong>Edit</strong> pada mana-mana kad di Dashboard untuk membetulkan maklumat.
+            Pautan gambar diproses secara automatik daripada mana-mana format tajuk lajur Google Sheet anda.
           </p>
         </div>
       </aside>
@@ -342,13 +342,13 @@
         Borang
       </button>
       <button id="mobTabDash" onclick="switchTab('dash')" class="clay-btn-secondary py-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
-        <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
         Dashboard
       </button>
     </div>
   </nav>
 
-  <!-- MODAL CETAKAN PDF -->
+  <!-- MODAL CETAKAN PDF RASMI -->
   <div id="printModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
     <div class="clay-card max-w-2xl w-full p-5 sm:p-8 relative max-h-[92vh] overflow-y-auto">
       <button onclick="closePrintModal()" class="no-print absolute top-4 right-4 w-9 h-9 clay-card-inner flex items-center justify-center text-slate-500 font-extrabold hover:text-slate-800">✕</button>
@@ -421,7 +421,6 @@
     (function () {
       'use strict';
       
-      // TAMPAL URL DEPLOYMENT WEB APP GAS ANDA DI SINI
       const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxrHOqqOo98lOu1wNCkez7XUPmGwrAyVsBlpqbVM0P4XtyyyyOkuuab-LgAvu9_7sk-/exec';
       const MAX_IMAGES = 4;
       
@@ -429,19 +428,52 @@
       let selectedImages = [];
       let allRecords = [];
       let activeRequestId = '';
-      let editingRecordId = null; // Menyimpan ID rekod yang sedang diedit
+      let editingRecordId = null;
 
       const form = document.getElementById('recordForm');
       const submitBtn = document.getElementById('submitBtn');
       const imageInput = document.getElementById('imageInput');
 
-      function formatDriveUrl(url) {
-        if (!url) return '';
-        const match = String(url).match(/\/d\/([a-zA-Z0-9_-]+)/);
+      // FUNGSI PINTAR EKSTRAK GAMBAR DARIPADA PELBAGAI FORMAT TAJUK LAJUR
+      function getRecordImages(r) {
+        if (!r || typeof r !== 'object') return [];
+        const found = [];
+
+        // 1. Cari tajuk lajur biasa (URL Gambar 1..4)
+        for (let i = 1; i <= 4; i++) {
+          if (r[`URL Gambar ${i}`]) found.push(r[`URL Gambar ${i}`]);
+        }
+
+        // 2. Jika tiada, imbas mana-mana lajur yang mengandungi pautan / ID fail Drive (cth: URL Gambar (webViewLink) atau ID Fail Drive)
+        if (found.length === 0) {
+          Object.keys(r).forEach(key => {
+            const k = key.toLowerCase();
+            const val = String(r[key] || '').trim();
+            if ((k.includes('gambar') || k.includes('drive') || k.includes('url')) && val) {
+              found.push(val);
+            }
+          });
+        }
+
+        // Formatkan kepada pautan lh3 direct viewer & nyah-duplikasi
+        const formatted = found.map(formatDriveUrl).filter(Boolean);
+        return Array.from(new Set(formatted));
+      }
+
+      function formatDriveUrl(str) {
+        if (!str) return '';
+        str = String(str).trim();
+        
+        const match = str.match(/\/d\/([a-zA-Z0-9_-]+)/);
         if (match && match[1]) {
           return 'https://lh3.googleusercontent.com/d/' + match[1];
         }
-        return url;
+
+        if (!str.startsWith('http') && /^[a-zA-Z0-9_-]{20,80}$/.test(str)) {
+          return 'https://lh3.googleusercontent.com/d/' + str;
+        }
+
+        return str;
       }
 
       window.switchTab = function(tab) {
@@ -457,7 +489,6 @@
         if (tab === 'dash' && gasUrl) loadDashboardData();
       };
 
-      // EDIT REKOD - MASUKKAN DATA KAD KE BORANG
       window.startEditRecord = function(index) {
         const r = allRecords[index];
         if (!r) return;
@@ -498,7 +529,6 @@
         document.getElementById('imageUploadNotice').textContent = 'Klik Untuk Memilih Gambar Alatan Baharu';
       };
 
-      // COMPRESS IMAGE
       imageInput.addEventListener('change', async function () {
         const files = Array.from(imageInput.files);
         if (!files.length) return;
@@ -561,7 +591,6 @@
         renderImagePreviews();
       };
 
-      // SUBMIT FORM (SIMPAN / KEMASKINI)
       form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -616,7 +645,6 @@
         }
       });
 
-      // LOAD DATA DASHBOARD
       window.loadDashboardData = function() {
         if (!gasUrl) return;
         const grid = document.getElementById('recordsGrid');
@@ -668,8 +696,7 @@
         }
 
         filtered.forEach((r) => {
-          const rawImgs = [r['URL Gambar 1'], r['URL Gambar 2'], r['URL Gambar 3'], r['URL Gambar 4']].filter(Boolean);
-          const imgs = rawImgs.map(formatDriveUrl);
+          const imgs = getRecordImages(r);
           const thumb = imgs[0] || '';
           const recordIndex = allRecords.indexOf(r);
 
@@ -700,7 +727,6 @@
         });
       };
 
-      // MODAL DETAIL & CETAK PDF
       window.openPrintModal = function(index) {
         const r = allRecords[index];
         if (!r) return;
@@ -717,8 +743,7 @@
         const imgsGrid = document.getElementById('printImagesGrid');
         imgsGrid.innerHTML = '';
         
-        const rawImgs = [r['URL Gambar 1'], r['URL Gambar 2'], r['URL Gambar 3'], r['URL Gambar 4']].filter(Boolean);
-        const imgs = rawImgs.map(formatDriveUrl);
+        const imgs = getRecordImages(r);
 
         if (imgs.length > 0) {
           imgs.forEach((url, i) => {
