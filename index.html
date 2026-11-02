@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>IPG Kokurikulum - Sistem Rekod Alatan</title>
+  <title>IPG Kokurikulum - Pengurusan Alatan 3D</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: light; }
@@ -57,6 +57,14 @@
       box-shadow: inset 4px 4px 8px #047857, inset -4px -4px 8px #10b981;
     }
 
+    .clay-btn-danger {
+      background: linear-gradient(145deg, #f43f5e, #e11d48);
+      border-radius: 1.25rem;
+      color: #ffffff;
+      box-shadow: 8px 8px 16px #c4d4c5, -8px -8px 16px #ffffff, inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2);
+      transition: all 0.15s ease;
+    }
+
     .clay-btn-secondary {
       background: #eaf2ec;
       border-radius: 1.25rem;
@@ -84,271 +92,366 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* CSS CETAKAN PDF RASMI IPG */
+    /* CETAKAN PDF */
     @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #printModal, #printModal * {
-        visibility: visible !important;
-      }
+      body * { visibility: hidden !important; }
+      #printModal, #printModal * { visibility: visible !important; }
       #printModal {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        height: auto !important;
-        background: #ffffff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
+        position: absolute !important; left: 0 !important; top: 0 !important;
+        width: 100% !important; height: auto !important; background: #ffffff !important; padding: 0 !important; box-shadow: none !important;
       }
-      .no-print {
-        display: none !important;
-      }
+      .no-print { display: none !important; }
       .clay-card, .clay-card-inner {
-        background: #ffffff !important;
-        box-shadow: none !important;
-        border: 1px solid #cbd5e1 !important;
-        border-radius: 8px !important;
+        background: #ffffff !important; box-shadow: none !important; border: 1px solid #cbd5e1 !important; border-radius: 8px !important;
       }
     }
   </style>
 </head>
-<body class="text-slate-800 pb-24 sm:pb-8">
+<body class="text-slate-800 min-h-screen">
 
-  <!-- HEADER UTAMA APP -->
-  <header class="sticky top-0 z-30 bg-[#eaf2ec]/90 backdrop-blur-md px-4 py-4 sm:px-8">
-    <div class="mx-auto max-w-6xl flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 clay-card flex items-center justify-center text-emerald-600 shrink-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800">IPG KOKURIKULUM</p>
-          <h1 class="text-lg font-black text-slate-900 leading-tight">Rekod Alatan 3D</h1>
-        </div>
-      </div>
+  <div class="flex flex-col md:flex-row min-h-screen">
 
-      <!-- DESKTOP NAV TABS -->
-      <div class="hidden sm:flex p-1.5 clay-card-inner gap-1 text-xs font-bold">
-        <button id="deskTabForm" onclick="switchTab('form')" class="px-5 py-2.5 rounded-xl text-emerald-900 clay-badge transition">
-          ➕ Borang Baharu
-        </button>
-        <button id="deskTabDash" onclick="switchTab('dash')" class="px-5 py-2.5 rounded-xl text-slate-600 transition hover:text-slate-900">
-          📊 Dashboard & List
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <div class="mx-auto max-w-6xl px-4 pt-4 sm:px-8">
-
-    <!-- INDIKATOR STATUS SAMBUNGAN AUTOMATIK -->
-    <section class="clay-card p-4 mb-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-3.5 h-3.5 rounded-full bg-emerald-500 shrink-0 shadow-sm" id="apiStatusDot"></div>
+    <!-- MENU SIDEBAR TEPI KIRI (DESKTOP & TABLET) -->
+    <aside class="w-full md:w-72 clay-card m-0 md:m-4 p-5 flex flex-col justify-between shrink-0 z-20">
+      <div>
+        <!-- LOGO APPS -->
+        <div class="flex items-center gap-3 mb-8 border-b border-slate-300/40 pb-4">
+          <div class="w-12 h-12 clay-card flex items-center justify-center text-emerald-600 shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          </div>
           <div>
-            <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-800" id="apiStatusText">Sistem Disambungkan Secara Automatik</h2>
-            <p class="text-[11px] text-slate-500">Pautan Web App GAS telah terbina terus di dalam kod sistem.</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800">IPG KOKURIKULUM</p>
+            <h1 class="text-base font-black text-slate-900 leading-tight">Pengurusan Alatan</h1>
           </div>
         </div>
-        <span class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full uppercase">API Aktif</span>
-      </div>
-    </section>
 
-    <!-- VIEW 1: BORANG PENDAFTARAN / EDIT ALATAN -->
-    <main id="viewForm" class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <section class="clay-card p-6 sm:p-8">
-        <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-300/40">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 clay-card-inner flex items-center justify-center text-emerald-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </div>
-            <div>
-              <h2 id="formTitle" class="text-base font-black text-slate-900">Pendaftaran Alatan Baharu</h2>
-              <p id="formSubtitle" class="text-xs text-slate-500">Isikan maklumat lengkap barang yang diterima</p>
-            </div>
-          </div>
-          <button id="cancelEditBtn" type="button" onclick="cancelEditMode()" class="hidden clay-btn-secondary px-3 py-1.5 text-xs font-bold text-rose-600">
-            ✕ Batal Edit
+        <!-- MENU ITEMS (SIDEBAR TEPI KIRI) -->
+        <nav class="space-y-3 hidden sm:block">
+          <button id="deskTabForm" onclick="switchTab('form')" class="w-full text-left px-4 py-3.5 rounded-2xl text-xs font-black text-emerald-900 clay-badge transition flex items-center gap-3">
+            <span class="text-base">📦</span> Rekod Penerimaan
           </button>
-        </div>
+          <button id="deskTabReport" onclick="switchTab('report')" class="w-full text-left px-4 py-3.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-3">
+            <span class="text-base">⚠️</span> Pelaporan Status
+          </button>
+          <button id="deskTabDash" onclick="switchTab('dash')" class="w-full text-left px-4 py-3.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-3">
+            <span class="text-base">📊</span> Dashboard & Rekod
+          </button>
+        </nav>
+      </div>
 
-        <form id="recordForm" class="space-y-5" novalidate>
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Alatan *</label>
-            <input id="itemName" required type="text" class="clay-input w-full px-4 py-3 text-sm" placeholder="Contoh: Bola Sepaktakraw S11 Gajah Emas">
+      <!-- STATUS SAMBUNGAN AUTOMATIK -->
+      <div class="mt-6 pt-4 border-t border-slate-300/40 hidden sm:block">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-emerald-500 shrink-0"></div>
+          <span class="text-[11px] font-extrabold text-slate-700">GAS API Disambung</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">Google Sheets & Drive Aktif</p>
+      </div>
+    </aside>
+
+    <!-- KANDUNGAN UTAMA (SEBELAH KANAN SIDEBAR) -->
+    <main class="flex-1 p-4 md:p-6 pb-24 md:pb-6 overflow-x-hidden">
+
+      <!-- VIEW 1: BORANG PENDAFTARAN PENERIMAAN ALATAN -->
+      <section id="viewForm" class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div class="clay-card p-6 sm:p-8">
+          <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-300/40">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 clay-card-inner flex items-center justify-center text-emerald-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </div>
+              <div>
+                <h2 id="formTitle" class="text-base font-black text-slate-900">Borang Penerimaan Alatan</h2>
+                <p id="formSubtitle" class="text-xs text-slate-500">Pendaftaran stok alatan baharu yang diterima</p>
+              </div>
+            </div>
+            <button id="cancelEditBtn" type="button" onclick="cancelEditMode()" class="hidden clay-btn-secondary px-3 py-1.5 text-xs font-bold text-rose-600">✕ Batal Edit</button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form id="recordForm" class="space-y-5" novalidate>
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kategori Kokurikulum *</label>
-              <select id="category" required class="clay-input w-full px-4 py-3 text-sm">
-                <option value="">Pilih Kategori</option>
-                <option value="Kelab/Persatuan (Akademik)">Kelab/Persatuan (Akademik)</option>
-                <option value="Kelab/Persatuan (Bukan Akademik)">Kelab/Persatuan (Bukan Akademik)</option>
-                <option value="Sukan dan Permainan">Sukan dan Permainan</option>
-                <option value="Unit Beruniform">Unit Beruniform</option>
-                <option value="Peralatan Tali Temali">Peralatan Tali Temali</option>
-                <option value="Peralatan Perkhemanan">Peralatan Perkhemanan</option>
-                <option value="Peralatan Sukan Air">Peralatan Sukan Air</option>
-                <option value="Lain-Lain">Lain-Lain</option>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Alatan *</label>
+              <input id="itemName" required type="text" class="clay-input w-full px-4 py-3 text-sm" placeholder="Contoh: Jaket Keselamatan Sukan Air">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kategori Kokurikulum *</label>
+                <select id="category" required class="clay-input w-full px-4 py-3 text-sm">
+                  <option value="">Pilih Kategori</option>
+                  <option value="Kelab/Persatuan (Akademik)">Kelab/Persatuan (Akademik)</option>
+                  <option value="Kelab/Persatuan (Bukan Akademik)">Kelab/Persatuan (Bukan Akademik)</option>
+                  <option value="Sukan dan Permainan">Sukan dan Permainan</option>
+                  <option value="Unit Beruniform">Unit Beruniform</option>
+                  <option value="Peralatan Tali Temali">Peralatan Tali Temali</option>
+                  <option value="Peralatan Perkhemanan">Peralatan Perkhemanan</option>
+                  <option value="Peralatan Sukan Air">Peralatan Sukan Air</option>
+                  <option value="Lain-Lain">Lain-Lain</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kuantiti (Unit) *</label>
+                <input id="quantity" required type="number" min="1" max="999999" class="clay-input w-full px-4 py-3 text-sm" placeholder="10">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tarikh Terima *</label>
+                <input id="receivedDate" required type="date" class="clay-input w-full px-4 py-3 text-sm">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Penerima *</label>
+                <input id="recipientName" required type="text" class="clay-input w-full px-4 py-3 text-sm" placeholder="Nama Penuh Penerima">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Catatan Pilihan</label>
+              <textarea id="notes" rows="3" class="clay-input w-full px-4 py-3 text-sm" placeholder="Catatan keadaan alatan / jenama..."></textarea>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Gambar Alatan (Maksimum 4)</label>
+                <span id="imgCounter" class="text-xs font-extrabold text-emerald-800">0 / 4 Gambar</span>
+              </div>
+              <input id="imageInput" type="file" multiple accept="image/jpeg,image/png,image/webp" class="hidden">
+              <button type="button" onclick="document.getElementById('imageInput').click()" class="clay-card-inner w-full p-5 text-center flex flex-col items-center justify-center gap-2 hover:opacity-90 transition">
+                <div class="w-10 h-10 clay-card flex items-center justify-center text-emerald-600">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-700">Pilih Gambar dari Galeri / Kamera</p>
+              </button>
+              <div id="imagePreviewGrid" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+            </div>
+
+            <button id="submitBtn" type="submit" class="clay-btn-primary w-full py-4 text-sm font-black flex items-center justify-center gap-2 mt-6">
+              <span id="submitSpinner" class="spinner hidden"></span>
+              <span id="submitLabel">SIMPAN REKOD PENERIMAAN</span>
+            </button>
+          </form>
+        </div>
+
+        <aside class="space-y-4">
+          <div class="clay-card p-6">
+            <h3 class="text-sm font-black text-slate-900">Nota Penerimaan</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mt-2">
+              Item yang didaftarkan di sini akan dijadikan master data senarai pilihan bagi Borang Pelaporan Status.
+            </p>
+          </div>
+        </aside>
+      </section>
+
+      <!-- VIEW 2: BORANG PELAPORAN KEROSAKAN / KEHILANGAN / PELUPUSAN -->
+      <section id="viewReport" class="hidden grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div class="clay-card p-6 sm:p-8">
+          <div class="flex items-center justify-between mb-6 pb-3 border-b border-rose-200">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 clay-card-inner flex items-center justify-center text-rose-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              </div>
+              <div>
+                <h2 id="reportFormTitle" class="text-base font-black text-slate-900">Borang Pelaporan Status Alatan</h2>
+                <p id="reportFormSubtitle" class="text-xs text-rose-600 font-bold">Laporan Kerosakan, Kehilangan & Pelupusan</p>
+              </div>
+            </div>
+            <button id="cancelReportEditBtn" type="button" onclick="cancelReportEditMode()" class="hidden clay-btn-secondary px-3 py-1.5 text-xs font-bold text-rose-600">✕ Batal Edit</button>
+          </div>
+
+          <form id="statusReportForm" class="space-y-5" novalidate>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-rose-800 mb-2">Jenis Laporan *</label>
+              <select id="reportType" required class="clay-input w-full px-4 py-3 text-sm font-bold text-rose-900">
+                <option value="">-- Pilih Jenis Laporan --</option>
+                <option value="Kerosakan">⚠️ Kerosakan Alatan</option>
+                <option value="Kehilangan">🚨 Kehilangan Alatan</option>
+                <option value="Pelupusan">🗑️ Pelupusan Alatan</option>
               </select>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kuantiti (Unit) *</label>
-              <input id="quantity" required type="number" min="1" max="999999" class="clay-input w-full px-4 py-3 text-sm" placeholder="20">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tarikh Terima *</label>
-              <input id="receivedDate" required type="date" class="clay-input w-full px-4 py-3 text-sm">
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Penerima *</label>
-              <input id="recipientName" required type="text" class="clay-input w-full px-4 py-3 text-sm" placeholder="Nama Penuh Penerima">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Catatan</label>
-            <textarea id="notes" rows="3" class="clay-input w-full px-4 py-3 text-sm" placeholder="Catatan lengkap keadaan alatan..."></textarea>
-          </div>
-
-          <!-- GAMBAR ALATAN -->
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Gambar Alatan (Maksimum 4)</label>
-              <span id="imgCounter" class="text-xs font-extrabold text-emerald-800">0 / 4 Gambar</span>
-            </div>
-
-            <input id="imageInput" type="file" multiple accept="image/jpeg,image/png,image/webp" class="hidden">
-            <button type="button" onclick="document.getElementById('imageInput').click()" class="clay-card-inner w-full p-5 text-center flex flex-col items-center justify-center gap-2 hover:opacity-90 transition">
-              <div class="w-10 h-10 clay-card flex items-center justify-center text-emerald-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+            <!-- FILTER 1: KATEGORI -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">1. Pilih Kategori Alatan *</label>
+                <select id="reportCategory" onchange="populateReportItemDropdown()" required class="clay-input w-full px-4 py-3 text-sm">
+                  <option value="">Pilih Kategori</option>
+                  <option value="Kelab/Persatuan (Akademik)">Kelab/Persatuan (Akademik)</option>
+                  <option value="Kelab/Persatuan (Bukan Akademik)">Kelab/Persatuan (Bukan Akademik)</option>
+                  <option value="Sukan dan Permainan">Sukan dan Permainan</option>
+                  <option value="Unit Beruniform">Unit Beruniform</option>
+                  <option value="Peralatan Tali Temali">Peralatan Tali Temali</option>
+                  <option value="Peralatan Perkhemanan">Peralatan Perkhemanan</option>
+                  <option value="Peralatan Sukan Air">Peralatan Sukan Air</option>
+                  <option value="Lain-Lain">Lain-Lain</option>
+                </select>
               </div>
-              <p class="text-xs font-bold text-slate-700" id="imageUploadNotice">Klik Untuk Memilih Gambar Alatan Baharu</p>
-              <p class="text-[10px] text-slate-400">Gambar dimampatkan automatik sebelum dihantar</p>
+
+              <!-- FILTER 2: DROPDOWN NAMA ALATAN DARI REKOD TERIMA -->
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">2. Pilih Nama Alatan (Dari Rekod Terima) *</label>
+                <select id="reportItemName" required class="clay-input w-full px-4 py-3 text-sm font-semibold text-emerald-950">
+                  <option value="">-- Sila Pilih Kategori Terlebih Dahulu --</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Kuantiti Terlibat *</label>
+                <input id="reportQuantity" required type="number" min="1" max="999999" class="clay-input w-full px-4 py-3 text-sm" placeholder="1">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tarikh Kejadian / Semakan *</label>
+                <input id="reportEventDate" required type="date" class="clay-input w-full px-4 py-3 text-sm">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Pelapor / Pegawai *</label>
+              <input id="reporterName" required type="text" class="clay-input w-full px-4 py-3 text-sm" placeholder="Nama Penuh Pelapor">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Sebab / Catatan Kejadian *</label>
+              <textarea id="reportNotes" rows="3" required class="clay-input w-full px-4 py-3 text-sm" placeholder="Terangkan keadaan kerosakan, lokasi hilang, atau alasan pelupusan..."></textarea>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Gambar Bukti (Maksimum 4)</label>
+                <span id="reportImgCounter" class="text-xs font-extrabold text-rose-700">0 / 4 Gambar</span>
+              </div>
+              <input id="reportImageInput" type="file" multiple accept="image/jpeg,image/png,image/webp" class="hidden">
+              <button type="button" onclick="document.getElementById('reportImageInput').click()" class="clay-card-inner w-full p-5 text-center flex flex-col items-center justify-center gap-2 hover:opacity-90 transition">
+                <div class="w-10 h-10 clay-card flex items-center justify-center text-rose-600">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                </div>
+                <p class="text-xs font-bold text-slate-700">Muat Naik Gambar Kerosakan / Bukti</p>
+              </button>
+              <div id="reportImagePreviewGrid" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+            </div>
+
+            <button id="reportSubmitBtn" type="submit" class="clay-btn-danger w-full py-4 text-sm font-black flex items-center justify-center gap-2 mt-6">
+              <span id="reportSubmitSpinner" class="spinner hidden"></span>
+              <span id="reportSubmitLabel">HANTAR LAPORAN STATUS</span>
             </button>
+          </form>
+        </div>
 
-            <!-- PRATONTON GAMBAR -->
-            <div id="imagePreviewGrid" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+        <aside class="space-y-4">
+          <div class="clay-card p-6 bg-gradient-to-br from-[#eaf2ec] to-[#fce7f3]">
+            <h3 class="text-sm font-black text-slate-900">Kawalan Pilihan Alatan</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mt-2">
+              Bagi mengelakkan ralat ejaan, nama alatan perlu dipilih dari senarai yang telah direkodkan terima sahaja.
+            </p>
           </div>
+        </aside>
+      </section>
 
-          <button id="submitBtn" type="submit" class="clay-btn-primary w-full py-4 text-sm font-black flex items-center justify-center gap-2 mt-6">
-            <span id="submitSpinner" class="spinner hidden"></span>
-            <span id="submitLabel">SIMPAN REKOD PENERIMAAN</span>
+      <!-- VIEW 3: DASHBOARD & LISTING -->
+      <section id="viewDash" class="hidden space-y-6">
+
+        <!-- SUIS PILIHAN DASHBOARD -->
+        <div class="clay-card p-2 flex gap-2">
+          <button id="btnDashReceipts" onclick="switchDashMode('receipts')" class="flex-1 py-3 rounded-2xl text-xs font-black clay-badge text-emerald-950 transition">
+            📦 Rekod Penerimaan (<span id="countReceipts">0</span>)
           </button>
-        </form>
+          <button id="btnDashReports" onclick="switchDashMode('reports')" class="flex-1 py-3 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+            ⚠️ Pelaporan Status (<span id="countReports">0</span>)
+          </button>
+        </div>
+
+        <!-- STATISTIK RINGKAS -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="clay-card p-5 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-500" id="statLabel1">Jumlah Rekod</p>
+              <p id="statTotalRecords" class="text-2xl font-black text-slate-900 mt-1">0</p>
+            </div>
+            <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-emerald-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+          </div>
+
+          <div class="clay-card p-5 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-500" id="statLabel2">Jumlah Kuantiti</p>
+              <p id="statTotalQty" class="text-2xl font-black text-emerald-700 mt-1">0</p>
+            </div>
+            <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-emerald-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+          </div>
+
+          <div class="clay-card p-5 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-bold uppercase text-slate-500">Kategori Aktif</p>
+              <p id="statCategories" class="text-2xl font-black text-slate-900 mt-1">0</p>
+            </div>
+            <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-amber-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 11h.01M7 15h.01M11 7h8M11 11h8M11 15h8"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTER & CARIAN -->
+        <section class="clay-card p-4 flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <input id="searchInput" oninput="renderDashboard()" type="text" placeholder="Cari nama alatan / individu..." class="clay-input w-full pl-10 pr-4 py-3 text-xs">
+            <svg class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+
+          <select id="filterCategory" onchange="renderDashboard()" class="clay-input px-4 py-3 text-xs font-semibold">
+            <option value="">Semua Kategori</option>
+            <option value="Kelab/Persatuan (Akademik)">Kelab/Persatuan (Akademik)</option>
+            <option value="Kelab/Persatuan (Bukan Akademik)">Kelab/Persatuan (Bukan Akademik)</option>
+            <option value="Sukan dan Permainan">Sukan dan Permainan</option>
+            <option value="Unit Beruniform">Unit Beruniform</option>
+            <option value="Peralatan Tali Temali">Peralatan Tali Temali</option>
+            <option value="Peralatan Perkhemanan">Peralatan Perkhemanan</option>
+            <option value="Peralatan Sukan Air">Peralatan Sukan Air</option>
+            <option value="Lain-Lain">Lain-Lain</option>
+          </select>
+
+          <select id="sortBy" onchange="renderDashboard()" class="clay-input px-4 py-3 text-xs font-semibold">
+            <option value="newest">Terbaharu</option>
+            <option value="oldest">Terlama</option>
+            <option value="name">Nama (A-Z)</option>
+            <option value="qty">Kuantiti Tinggi</option>
+          </select>
+
+          <button onclick="loadDashboardData()" class="clay-btn-secondary px-4 py-3 text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5 shrink-0">
+            <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>Muat Semula</span>
+          </button>
+        </section>
+
+        <!-- SENARAI KAD ITEM REKOD -->
+        <section id="recordsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></section>
       </section>
-
-      <aside class="space-y-4">
-        <div class="clay-card p-6">
-          <div class="w-10 h-10 clay-card-inner flex items-center justify-center text-emerald-700 mb-3">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h3 class="text-sm font-black text-slate-900">Pengurusan Rekod & Gambar</h3>
-          <p class="text-xs text-slate-600 leading-relaxed mt-2">
-            Pautan gambar diproses secara automatik daripada mana-mana format tajuk lajur Google Sheet anda.
-          </p>
-        </div>
-      </aside>
-    </main>
-
-    <!-- VIEW 2: DASHBOARD & SENARAI REKOD -->
-    <main id="viewDash" class="hidden space-y-6">
-
-      <!-- STATISTIK RINGKAS -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="clay-card p-5 flex items-center justify-between">
-          <div>
-            <p class="text-[10px] font-bold uppercase text-slate-500">Jumlah Rekod</p>
-            <p id="statTotalRecords" class="text-2xl font-black text-slate-900 mt-1">0</p>
-          </div>
-          <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-emerald-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-          </div>
-        </div>
-
-        <div class="clay-card p-5 flex items-center justify-between">
-          <div>
-            <p class="text-[10px] font-bold uppercase text-slate-500">Jumlah Kuantiti</p>
-            <p id="statTotalQty" class="text-2xl font-black text-emerald-700 mt-1">0</p>
-          </div>
-          <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-emerald-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-          </div>
-        </div>
-
-        <div class="clay-card p-5 flex items-center justify-between">
-          <div>
-            <p class="text-[10px] font-bold uppercase text-slate-500">Kategori Aktif</p>
-            <p id="statCategories" class="text-2xl font-black text-slate-900 mt-1">0</p>
-          </div>
-          <div class="w-12 h-12 clay-card-inner flex items-center justify-center text-amber-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 11h.01M7 15h.01M11 7h8M11 11h8M11 15h8"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- FILTER & CARIAN -->
-      <section class="clay-card p-4 flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
-          <input id="searchInput" oninput="renderDashboard()" type="text" placeholder="Cari nama alatan / penerima..." class="clay-input w-full pl-10 pr-4 py-3 text-xs">
-          <svg class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        </div>
-
-        <select id="filterCategory" onchange="renderDashboard()" class="clay-input px-4 py-3 text-xs font-semibold">
-          <option value="">Semua Kategori</option>
-          <option value="Kelab/Persatuan (Akademik)">Kelab/Persatuan (Akademik)</option>
-          <option value="Kelab/Persatuan (Bukan Akademik)">Kelab/Persatuan (Bukan Akademik)</option>
-          <option value="Sukan dan Permainan">Sukan dan Permainan</option>
-          <option value="Unit Beruniform">Unit Beruniform</option>
-          <option value="Peralatan Tali Temali">Peralatan Tali Temali</option>
-          <option value="Peralatan Perkhemanan">Peralatan Perkhemanan</option>
-          <option value="Peralatan Sukan Air">Peralatan Sukan Air</option>
-          <option value="Lain-Lain">Lain-Lain</option>
-        </select>
-
-        <select id="sortBy" onchange="renderDashboard()" class="clay-input px-4 py-3 text-xs font-semibold">
-          <option value="newest">Terbaharu</option>
-          <option value="oldest">Terlama</option>
-          <option value="name">Nama (A-Z)</option>
-          <option value="qty">Kuantiti Tinggi</option>
-        </select>
-
-        <button onclick="loadDashboardData()" class="clay-btn-secondary px-4 py-3 text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5 shrink-0">
-          <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          <span>Muat Semula</span>
-        </button>
-      </section>
-
-      <!-- SENARAI KAD ITEM REKOD -->
-      <section id="recordsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></section>
     </main>
   </div>
 
   <!-- STICKY MOBILE BOTTOM NAV -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#eaf2ec]/95 backdrop-blur-lg border-t border-slate-300/40 p-2 sm:hidden shadow-lg">
-    <div class="grid grid-cols-2 gap-2 max-w-sm mx-auto">
-      <button id="mobTabForm" onclick="switchTab('form')" class="clay-btn-primary py-3 flex items-center justify-center gap-2 text-xs font-black">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-        Borang
+    <div class="grid grid-cols-3 gap-1 max-w-md mx-auto">
+      <button id="mobTabForm" onclick="switchTab('form')" class="clay-btn-primary py-2.5 flex flex-col items-center justify-center text-[11px] font-black">
+        <span>📦 Terima</span>
       </button>
-      <button id="mobTabDash" onclick="switchTab('dash')" class="clay-btn-secondary py-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-700">
-        <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-        Dashboard
+      <button id="mobTabReport" onclick="switchTab('report')" class="clay-btn-secondary py-2.5 flex flex-col items-center justify-center text-[11px] font-bold text-rose-700">
+        <span>⚠️ Pelaporan</span>
+      </button>
+      <button id="mobTabDash" onclick="switchTab('dash')" class="clay-btn-secondary py-2.5 flex flex-col items-center justify-center text-[11px] font-bold text-slate-700">
+        <span>📊 Dashboard</span>
       </button>
     </div>
   </nav>
 
-  <!-- MODAL CETAKAN PDF RASMI -->
+  <!-- MODAL CETAKAN PDF RASMI IPG -->
   <div id="printModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
     <div class="clay-card max-w-2xl w-full p-5 sm:p-8 relative max-h-[92vh] overflow-y-auto">
       <button onclick="closePrintModal()" class="no-print absolute top-4 right-4 w-9 h-9 clay-card-inner flex items-center justify-center text-slate-500 font-extrabold hover:text-slate-800">✕</button>
@@ -357,7 +460,7 @@
         <div class="border-b-2 border-emerald-900 pb-4 mb-5 flex items-center justify-between">
           <div>
             <h2 class="text-sm font-black text-emerald-950 uppercase tracking-wide">INSTITUT PENDIDIKAN GURU MALAYSIA</h2>
-            <p class="text-xs font-bold text-slate-700 mt-0.5">BORANG REKOD PENERIMAAN ALATAN KOKURIKULUM</p>
+            <p class="text-xs font-bold text-slate-700 mt-0.5" id="printDocTitle">BORANG REKOD PENERIMAAN ALATAN KOKURIKULUM</p>
           </div>
           <span class="text-[11px] font-black bg-emerald-100 text-emerald-900 px-3.5 py-1 rounded-full uppercase border border-emerald-200" id="printCategory">Kategori</span>
         </div>
@@ -365,15 +468,15 @@
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 clay-card-inner p-4 text-xs">
             <div class="space-y-1">
-              <p class="text-slate-500 font-bold uppercase text-[10px]">ID Rekod:</p>
+              <p class="text-slate-500 font-bold uppercase text-[10px]">ID Rekod / Laporan:</p>
               <p id="printId" class="font-mono font-black text-slate-900 break-all"></p>
             </div>
             <div class="space-y-1">
-              <p class="text-slate-500 font-bold uppercase text-[10px]">Tarikh Diterima:</p>
+              <p class="text-slate-500 font-bold uppercase text-[10px]" id="printLabelDate">Tarikh Diterima:</p>
               <p id="printDate" class="font-bold text-slate-900"></p>
             </div>
             <div class="space-y-1">
-              <p class="text-slate-500 font-bold uppercase text-[10px]">Nama Penerima:</p>
+              <p class="text-slate-500 font-bold uppercase text-[10px]" id="printLabelUser">Nama Penerima:</p>
               <p id="printRecipient" class="font-bold text-slate-900"></p>
             </div>
             <div class="space-y-1">
@@ -389,18 +492,18 @@
             </div>
             <div class="pt-2 border-t border-slate-300/40 flex justify-between items-center">
               <div>
-                <p class="text-slate-500 font-bold uppercase text-[10px]">Kuantiti Diterima:</p>
+                <p class="text-slate-500 font-bold uppercase text-[10px]">Kuantiti:</p>
                 <p class="text-sm font-black text-emerald-800" id="printQty"></p>
               </div>
             </div>
             <div class="pt-2 border-t border-slate-300/40">
-              <p class="text-slate-500 font-bold uppercase text-[10px]">Catatan / Semakan Fizikal:</p>
+              <p class="text-slate-500 font-bold uppercase text-[10px]">Catatan / Keterangan Kejadian:</p>
               <p class="text-slate-800 leading-relaxed mt-0.5 font-medium" id="printNotes"></p>
             </div>
           </div>
 
           <div>
-            <p class="text-xs font-black uppercase text-slate-700 mb-2">Galeri Gambar Alatan (Maksimum 4 Keping):</p>
+            <p class="text-xs font-black uppercase text-slate-700 mb-2">Galeri Gambar Alatan / Bukti (Maksimum 4 Keping):</p>
             <div id="printImagesGrid" class="grid grid-cols-2 gap-3"></div>
           </div>
         </div>
@@ -421,30 +524,33 @@
     (function () {
       'use strict';
       
-      const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxrHOqqOo98lOu1wNCkez7XUPmGwrAyVsBlpqbVM0P4XtyyyyOkuuab-LgAvu9_7sk-/exec';
+      const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxHOqqOoR8Ou1wN-example/exec';
       const MAX_IMAGES = 4;
       
       let gasUrl = DEFAULT_GAS_URL;
       let selectedImages = [];
+      let reportSelectedImages = [];
       let allRecords = [];
+      let allReports = [];
+      let currentDashMode = 'receipts';
+      
       let activeRequestId = '';
       let editingRecordId = null;
+      let editingReportId = null;
 
       const form = document.getElementById('recordForm');
+      const statusReportForm = document.getElementById('statusReportForm');
       const submitBtn = document.getElementById('submitBtn');
+      const reportSubmitBtn = document.getElementById('reportSubmitBtn');
       const imageInput = document.getElementById('imageInput');
+      const reportImageInput = document.getElementById('reportImageInput');
 
-      // FUNGSI PINTAR EKSTRAK GAMBAR DARIPADA PELBAGAI FORMAT TAJUK LAJUR
       function getRecordImages(r) {
         if (!r || typeof r !== 'object') return [];
         const found = [];
-
-        // 1. Cari tajuk lajur biasa (URL Gambar 1..4)
         for (let i = 1; i <= 4; i++) {
           if (r[`URL Gambar ${i}`]) found.push(r[`URL Gambar ${i}`]);
         }
-
-        // 2. Jika tiada, imbas mana-mana lajur yang mengandungi pautan / ID fail Drive (cth: URL Gambar (webViewLink) atau ID Fail Drive)
         if (found.length === 0) {
           Object.keys(r).forEach(key => {
             const k = key.toLowerCase();
@@ -454,101 +560,99 @@
             }
           });
         }
-
-        // Formatkan kepada pautan lh3 direct viewer & nyah-duplikasi
-        const formatted = found.map(formatDriveUrl).filter(Boolean);
-        return Array.from(new Set(formatted));
+        return Array.from(new Set(found.map(formatDriveUrl).filter(Boolean)));
       }
 
       function formatDriveUrl(str) {
         if (!str) return '';
         str = String(str).trim();
-        
         const match = str.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (match && match[1]) {
-          return 'https://lh3.googleusercontent.com/d/' + match[1];
-        }
-
-        if (!str.startsWith('http') && /^[a-zA-Z0-9_-]{20,80}$/.test(str)) {
-          return 'https://lh3.googleusercontent.com/d/' + str;
-        }
-
+        if (match && match[1]) return 'https://lh3.googleusercontent.com/d/' + match[1];
+        if (!str.startsWith('http') && /^[a-zA-Z0-9_-]{20,80}$/.test(str)) return 'https://lh3.googleusercontent.com/d/' + str;
         return str;
       }
 
       window.switchTab = function(tab) {
         document.getElementById('viewForm').classList.toggle('hidden', tab !== 'form');
+        document.getElementById('viewReport').classList.toggle('hidden', tab !== 'report');
         document.getElementById('viewDash').classList.toggle('hidden', tab !== 'dash');
 
-        document.getElementById('deskTabForm').className = tab === 'form' ? 'px-5 py-2.5 rounded-xl text-emerald-900 clay-badge transition' : 'px-5 py-2.5 rounded-xl text-slate-600 transition hover:text-slate-900';
-        document.getElementById('deskTabDash').className = tab === 'dash' ? 'px-5 py-2.5 rounded-xl text-emerald-900 clay-badge transition' : 'px-5 py-2.5 rounded-xl text-slate-600 transition hover:text-slate-900';
+        document.getElementById('deskTabForm').className = tab === 'form' ? 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-black text-emerald-900 clay-badge transition flex items-center gap-3' : 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-3';
+        document.getElementById('deskTabReport').className = tab === 'report' ? 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-black text-rose-900 clay-badge transition flex items-center gap-3' : 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-3';
+        document.getElementById('deskTabDash').className = tab === 'dash' ? 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-black text-emerald-900 clay-badge transition flex items-center gap-3' : 'w-full text-left px-4 py-3.5 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-3';
 
-        document.getElementById('mobTabForm').className = tab === 'form' ? 'clay-btn-primary py-3 flex items-center justify-center gap-2 text-xs font-black' : 'clay-btn-secondary py-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-700';
-        document.getElementById('mobTabDash').className = tab === 'dash' ? 'clay-btn-primary py-3 flex items-center justify-center gap-2 text-xs font-black' : 'clay-btn-secondary py-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-700';
+        document.getElementById('mobTabForm').className = tab === 'form' ? 'clay-btn-primary py-2.5 flex flex-col items-center justify-center text-[11px] font-black' : 'clay-btn-secondary py-2.5 flex flex-col items-center justify-center text-[11px] font-bold text-slate-700';
+        document.getElementById('mobTabReport').className = tab === 'report' ? 'clay-btn-danger py-2.5 flex flex-col items-center justify-center text-[11px] font-black' : 'clay-btn-secondary py-2.5 flex flex-col items-center justify-center text-[11px] font-bold text-rose-700';
+        document.getElementById('mobTabDash').className = tab === 'dash' ? 'clay-btn-primary py-2.5 flex flex-col items-center justify-center text-[11px] font-black' : 'clay-btn-secondary py-2.5 flex flex-col items-center justify-center text-[11px] font-bold text-slate-700';
+
+        if (tab === 'report') {
+          populateReportItemDropdown();
+        }
 
         if (tab === 'dash' && gasUrl) loadDashboardData();
       };
 
-      window.startEditRecord = function(index) {
-        const r = allRecords[index];
-        if (!r) return;
+      // FUNGSI JANA PINTAR DROPDOWN NAMA ALATAN BERBANTUKAN FILTER KATEGORI
+      window.populateReportItemDropdown = function() {
+        const cat = document.getElementById('reportCategory').value;
+        const select = document.getElementById('reportItemName');
+        select.innerHTML = '';
 
-        editingRecordId = r['ID Rekod'];
-        
-        document.getElementById('itemName').value = r['Nama Alatan'] || '';
-        document.getElementById('category').value = r['Kategori'] || '';
-        document.getElementById('quantity').value = r['Kuantiti'] || '';
-        document.getElementById('receivedDate').value = r['Tarikh Terima'] || '';
-        document.getElementById('recipientName').value = r['Nama Penerima'] || '';
-        document.getElementById('notes').value = r['Catatan'] || '';
-
-        document.getElementById('formTitle').textContent = 'Edit / Kemaskini Rekod';
-        document.getElementById('formSubtitle').textContent = 'Ubah maklumat dan simpan semula';
-        document.getElementById('submitLabel').textContent = 'KEMASKINI REKOD';
-        document.getElementById('cancelEditBtn').classList.remove('hidden');
-        document.getElementById('imageUploadNotice').textContent = 'Klik Untuk Menukar Gambar (Jika Perlu)';
-
-        selectedImages = [];
-        renderImagePreviews();
-
-        switchTab('form');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
-
-      window.cancelEditMode = function() {
-        editingRecordId = null;
-        form.reset();
-        selectedImages = [];
-        renderImagePreviews();
-        setTodayDate();
-
-        document.getElementById('formTitle').textContent = 'Pendaftaran Alatan Baharu';
-        document.getElementById('formSubtitle').textContent = 'Isikan maklumat lengkap barang yang diterima';
-        document.getElementById('submitLabel').textContent = 'SIMPAN REKOD PENERIMAAN';
-        document.getElementById('cancelEditBtn').classList.add('hidden');
-        document.getElementById('imageUploadNotice').textContent = 'Klik Untuk Memilih Gambar Alatan Baharu';
-      };
-
-      imageInput.addEventListener('change', async function () {
-        const files = Array.from(imageInput.files);
-        if (!files.length) return;
-
-        if (selectedImages.length + files.length > MAX_IMAGES) {
-          alert('Maksimum 4 keping gambar sahaja dibenarkan.');
+        if (!cat) {
+          select.innerHTML = '<option value="">-- Sila Pilih Kategori Terlebih Dahulu --</option>';
           return;
         }
 
+        const filtered = allRecords.filter(r => r['Kategori'] === cat && r['Nama Alatan']);
+        const uniqueItems = Array.from(new Set(filtered.map(r => r['Nama Alatan'].trim()))).filter(Boolean);
+
+        if (uniqueItems.length === 0) {
+          select.innerHTML = '<option value="">-- Tiada Rekod Alatan Diterima Bagi Kategori Ini --</option>';
+          return;
+        }
+
+        select.innerHTML = '<option value="">-- Pilih Nama Alatan --</option>';
+        uniqueItems.forEach(itemName => {
+          select.innerHTML += `<option value="${itemName}">${itemName}</option>`;
+        });
+      };
+
+      window.switchDashMode = function(mode) {
+        currentDashMode = mode;
+        document.getElementById('btnDashReceipts').className = mode === 'receipts' ? 'flex-1 py-3 rounded-2xl text-xs font-black clay-badge text-emerald-950 transition' : 'flex-1 py-3 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+        document.getElementById('btnDashReports').className = mode === 'reports' ? 'flex-1 py-3 rounded-2xl text-xs font-black clay-badge text-rose-950 transition' : 'flex-1 py-3 rounded-2xl text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+        renderDashboard();
+      };
+
+      // HANDLING IMAGES
+      imageInput.addEventListener('change', async function () {
+        const files = Array.from(imageInput.files);
+        if (!files.length) return;
+        if (selectedImages.length + files.length > MAX_IMAGES) return alert('Maksimum 4 keping gambar sahaja dibenarkan.');
         for (const file of files) {
           if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) continue;
           try {
             const base64 = await processAndCompressImage(file);
             selectedImages.push({ fileName: file.name, mimeType: 'image/jpeg', base64: base64, previewUrl: 'data:image/jpeg;base64,' + base64 });
-          } catch (e) {
-            alert('Gagal memproses gambar ' + file.name);
-          }
+          } catch (e) {}
         }
         imageInput.value = '';
-        renderImagePreviews();
+        renderImagePreviews('imagePreviewGrid', selectedImages, 'imgCounter', removeImage);
+      });
+
+      reportImageInput.addEventListener('change', async function () {
+        const files = Array.from(reportImageInput.files);
+        if (!files.length) return;
+        if (reportSelectedImages.length + files.length > MAX_IMAGES) return alert('Maksimum 4 keping gambar sahaja dibenarkan.');
+        for (const file of files) {
+          if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) continue;
+          try {
+            const base64 = await processAndCompressImage(file);
+            reportSelectedImages.push({ fileName: file.name, mimeType: 'image/jpeg', base64: base64, previewUrl: 'data:image/jpeg;base64,' + base64 });
+          } catch (e) {}
+        }
+        reportImageInput.value = '';
+        renderImagePreviews('reportImagePreviewGrid', reportSelectedImages, 'reportImgCounter', removeReportImage);
       });
 
       function processAndCompressImage(file) {
@@ -565,35 +669,39 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-            resolve(dataUrl.split(',')[1]);
+            resolve(canvas.toDataURL('image/jpeg', 0.75).split(',')[1]);
           };
           img.onerror = reject;
         });
       }
 
-      function renderImagePreviews() {
-        const grid = document.getElementById('imagePreviewGrid');
+      function renderImagePreviews(gridId, arr, counterId, removeFn) {
+        const grid = document.getElementById(gridId);
         grid.innerHTML = '';
-        selectedImages.forEach((img, idx) => {
+        arr.forEach((img, idx) => {
           grid.innerHTML += `
             <div class="relative clay-card-sm overflow-hidden h-24 bg-slate-100 border border-slate-200">
               <img src="${img.previewUrl}" class="w-full h-full object-cover">
-              <button type="button" onclick="removeImage(${idx})" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-xs shadow-md">✕</button>
+              <button type="button" onclick="${removeFn.name}(${idx})" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-xs shadow-md">✕</button>
             </div>
           `;
         });
-        document.getElementById('imgCounter').textContent = `${selectedImages.length} / ${MAX_IMAGES} Gambar`;
+        document.getElementById(counterId).textContent = `${arr.length} / ${MAX_IMAGES} Gambar`;
       }
 
       window.removeImage = function(index) {
         selectedImages.splice(index, 1);
-        renderImagePreviews();
+        renderImagePreviews('imagePreviewGrid', selectedImages, 'imgCounter', removeImage);
       };
 
+      window.removeReportImage = function(index) {
+        reportSelectedImages.splice(index, 1);
+        renderImagePreviews('reportImagePreviewGrid', reportSelectedImages, 'reportImgCounter', removeReportImage);
+      };
+
+      // SUBMIT RECEIPT FORM
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-
         const requestId = Math.random().toString(36).substring(2) + Date.now().toString(36);
         activeRequestId = requestId;
 
@@ -613,7 +721,36 @@
         submitBtn.disabled = true;
         document.getElementById('submitSpinner').classList.remove('hidden');
         document.getElementById('submitLabel').textContent = editingRecordId ? 'SEDANG MENGEMAS KINI…' : 'SEDANG MENYIMPAN…';
+        postToGas(payload);
+      });
 
+      // SUBMIT STATUS REPORT FORM
+      statusReportForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const requestId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        activeRequestId = requestId;
+
+        const payload = {
+          requestId: requestId,
+          action: editingReportId ? 'updateReport' : 'createReport',
+          recordId: editingReportId,
+          reportType: document.getElementById('reportType').value,
+          itemName: document.getElementById('reportItemName').value,
+          category: document.getElementById('reportCategory').value,
+          quantity: Number(document.getElementById('reportQuantity').value),
+          eventDate: document.getElementById('reportEventDate').value,
+          reporterName: document.getElementById('reporterName').value.trim(),
+          notes: document.getElementById('reportNotes').value.trim(),
+          images: reportSelectedImages.map(img => ({ fileName: img.fileName, mimeType: img.mimeType, base64: img.base64 }))
+        };
+
+        reportSubmitBtn.disabled = true;
+        document.getElementById('reportSubmitSpinner').classList.remove('hidden');
+        document.getElementById('reportSubmitLabel').textContent = editingReportId ? 'SEDANG MENGEMAS KINI…' : 'SEDANG MENYIMPAN…';
+        postToGas(payload);
+      });
+
+      function postToGas(payload) {
         const postForm = document.createElement('form');
         postForm.method = 'POST';
         postForm.action = gasUrl;
@@ -628,22 +765,83 @@
         document.body.appendChild(postForm);
         postForm.submit();
         setTimeout(() => postForm.remove(), 4000);
-      });
+      }
 
       window.addEventListener('message', function (e) {
         if (!e.data || e.data.type !== 'ipg-record-response' || e.data.requestId !== activeRequestId) return;
         submitBtn.disabled = false;
+        reportSubmitBtn.disabled = false;
         document.getElementById('submitSpinner').classList.add('hidden');
+        document.getElementById('reportSubmitSpinner').classList.add('hidden');
         
         if (e.data.success) {
           alert(e.data.message || 'Berjaya!');
           cancelEditMode();
+          cancelReportEditMode();
           switchTab('dash');
         } else {
           alert('Ralat: ' + e.data.message);
           document.getElementById('submitLabel').textContent = editingRecordId ? 'KEMASKINI REKOD' : 'SIMPAN REKOD PENERIMAAN';
+          document.getElementById('reportSubmitLabel').textContent = editingReportId ? 'KEMASKINI LAPORAN' : 'HANTAR LAPORAN STATUS';
         }
       });
+
+      window.startEditRecord = function(index) {
+        const r = allRecords[index];
+        if (!r) return;
+        editingRecordId = r['ID Rekod'];
+        document.getElementById('itemName').value = r['Nama Alatan'] || '';
+        document.getElementById('category').value = r['Kategori'] || '';
+        document.getElementById('quantity').value = r['Kuantiti'] || '';
+        document.getElementById('receivedDate').value = r['Tarikh Terima'] || '';
+        document.getElementById('recipientName').value = r['Nama Penerima'] || '';
+        document.getElementById('notes').value = r['Catatan'] || '';
+        document.getElementById('submitLabel').textContent = 'KEMASKINI REKOD';
+        document.getElementById('cancelEditBtn').classList.remove('hidden');
+        selectedImages = [];
+        renderImagePreviews('imagePreviewGrid', selectedImages, 'imgCounter', removeImage);
+        switchTab('form');
+      };
+
+      window.startEditReport = function(index) {
+        const r = allReports[index];
+        if (!r) return;
+        editingReportId = r['ID Laporan'];
+        document.getElementById('reportType').value = r['Jenis Laporan'] || '';
+        document.getElementById('reportCategory').value = r['Kategori'] || '';
+        populateReportItemDropdown();
+        document.getElementById('reportItemName').value = r['Nama Alatan'] || '';
+        document.getElementById('reportQuantity').value = r['Kuantiti Terlibat'] || '';
+        document.getElementById('reportEventDate').value = r['Tarikh Kejadian'] || '';
+        document.getElementById('reporterName').value = r['Nama Pelapor'] || '';
+        document.getElementById('reportNotes').value = r['Catatan'] || '';
+        document.getElementById('reportSubmitLabel').textContent = 'KEMASKINI LAPORAN';
+        document.getElementById('cancelReportEditBtn').classList.remove('hidden');
+        reportSelectedImages = [];
+        renderImagePreviews('reportImagePreviewGrid', reportSelectedImages, 'reportImgCounter', removeReportImage);
+        switchTab('report');
+      };
+
+      window.cancelEditMode = function() {
+        editingRecordId = null;
+        form.reset();
+        selectedImages = [];
+        renderImagePreviews('imagePreviewGrid', selectedImages, 'imgCounter', removeImage);
+        document.getElementById('submitLabel').textContent = 'SIMPAN REKOD PENERIMAAN';
+        document.getElementById('cancelEditBtn').classList.add('hidden');
+        setTodayDates();
+      };
+
+      window.cancelReportEditMode = function() {
+        editingReportId = null;
+        statusReportForm.reset();
+        reportSelectedImages = [];
+        renderImagePreviews('reportImagePreviewGrid', reportSelectedImages, 'reportImgCounter', removeReportImage);
+        document.getElementById('reportSubmitLabel').textContent = 'HANTAR LAPORAN STATUS';
+        document.getElementById('cancelReportEditBtn').classList.add('hidden');
+        populateReportItemDropdown();
+        setTodayDates();
+      };
 
       window.loadDashboardData = function() {
         if (!gasUrl) return;
@@ -655,6 +853,10 @@
           .then(data => {
             if (data.success) {
               allRecords = data.records || [];
+              allReports = data.reports || [];
+              document.getElementById('countReceipts').textContent = allRecords.length;
+              document.getElementById('countReports').textContent = allReports.length;
+              populateReportItemDropdown();
               renderDashboard();
             } else {
               grid.innerHTML = '<p class="col-span-full text-center text-xs text-rose-500 py-10">Gagal mengambil data.</p>';
@@ -669,22 +871,34 @@
         const search = document.getElementById('searchInput').value.toLowerCase();
         const categoryFilter = document.getElementById('filterCategory').value;
         const sortBy = document.getElementById('sortBy').value;
+        const isReceipt = (currentDashMode === 'receipts');
 
-        let filtered = allRecords.filter(r => {
-          const matchSearch = (r['Nama Alatan'] || '').toLowerCase().includes(search) || (r['Nama Penerima'] || '').toLowerCase().includes(search);
+        let rawData = isReceipt ? allRecords : allReports;
+
+        let filtered = rawData.filter(r => {
+          const name = (r['Nama Alatan'] || '').toLowerCase();
+          const user = ((isReceipt ? r['Nama Penerima'] : r['Nama Pelapor']) || '').toLowerCase();
+          const matchSearch = name.includes(search) || user.includes(search);
           const matchCat = !categoryFilter || r['Kategori'] === categoryFilter;
           return matchSearch && matchCat;
         });
 
         filtered.sort((a, b) => {
-          if (sortBy === 'newest') return new Date(b['Tarikh Terima']) - new Date(a['Tarikh Terima']);
-          if (sortBy === 'oldest') return new Date(a['Tarikh Terima']) - new Date(b['Tarikh Terima']);
+          const dateA = new Date(isReceipt ? a['Tarikh Terima'] : a['Tarikh Kejadian']);
+          const dateB = new Date(isReceipt ? b['Tarikh Terima'] : b['Tarikh Kejadian']);
+          const qtyA = Number(isReceipt ? a['Kuantiti'] : a['Kuantiti Terlibat']) || 0;
+          const qtyB = Number(isReceipt ? b['Kuantiti'] : b['Kuantiti Terlibat']) || 0;
+
+          if (sortBy === 'newest') return dateB - dateA;
+          if (sortBy === 'oldest') return dateA - dateB;
           if (sortBy === 'name') return (a['Nama Alatan'] || '').localeCompare(b['Nama Alatan'] || '');
-          if (sortBy === 'qty') return Number(b['Kuantiti'] || 0) - Number(a['Kuantiti'] || 0);
+          if (sortBy === 'qty') return qtyB - qtyA;
         });
 
+        document.getElementById('statLabel1').textContent = isReceipt ? 'Jumlah Penerimaan' : 'Jumlah Laporan Status';
+        document.getElementById('statLabel2').textContent = isReceipt ? 'Jumlah Kuantiti Terima' : 'Jumlah Terlibat';
         document.getElementById('statTotalRecords').textContent = filtered.length;
-        document.getElementById('statTotalQty').textContent = filtered.reduce((acc, r) => acc + Number(r['Kuantiti'] || 0), 0);
+        document.getElementById('statTotalQty').textContent = filtered.reduce((acc, r) => acc + Number(isReceipt ? (r['Kuantiti'] || 0) : (r['Kuantiti Terlibat'] || 0)), 0);
         document.getElementById('statCategories').textContent = new Set(filtered.map(r => r['Kategori'])).size;
 
         const grid = document.getElementById('recordsGrid');
@@ -698,55 +912,85 @@
         filtered.forEach((r) => {
           const imgs = getRecordImages(r);
           const thumb = imgs[0] || '';
-          const recordIndex = allRecords.indexOf(r);
+          const recordIndex = rawData.indexOf(r);
 
-          grid.innerHTML += `
-            <div class="clay-card p-5 flex flex-col justify-between">
-              <div>
-                <div class="flex justify-between items-start gap-2 mb-2">
-                  <span class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full uppercase">${r['Kategori'] || 'Lain-Lain'}</span>
-                  <span class="text-[11px] font-extrabold text-slate-400">${r['Tarikh Terima'] || ''}</span>
+          if (isReceipt) {
+            grid.innerHTML += `
+              <div class="clay-card p-5 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start gap-2 mb-2">
+                    <span class="text-[10px] font-black bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full uppercase">${r['Kategori'] || 'Lain-Lain'}</span>
+                    <span class="text-[11px] font-extrabold text-slate-400">${r['Tarikh Terima'] || ''}</span>
+                  </div>
+                  <h3 class="font-black text-slate-900 text-sm leading-tight">${r['Nama Alatan']}</h3>
+                  <p class="text-xs text-slate-600 mt-2">Kuantiti: <strong class="text-emerald-700 text-sm font-black">${r['Kuantiti']} Unit</strong></p>
+                  <p class="text-xs text-slate-500">Penerima: ${r['Nama Penerima']}</p>
                 </div>
-                <h3 class="font-black text-slate-900 text-sm leading-tight">${r['Nama Alatan']}</h3>
-                <p class="text-xs text-slate-600 mt-2">Kuantiti: <strong class="text-emerald-700 text-sm font-black">${r['Kuantiti']} Unit</strong></p>
-                <p class="text-xs text-slate-500">Penerima: ${r['Nama Penerima']}</p>
-              </div>
 
-              ${thumb ? `<div class="mt-3 h-36 w-full clay-card-inner overflow-hidden border border-slate-200"><img src="${thumb}" class="w-full h-full object-cover"></div>` : ''}
+                ${thumb ? `<div class="mt-3 h-36 w-full clay-card-inner overflow-hidden border border-slate-200"><img src="${thumb}" class="w-full h-full object-cover"></div>` : ''}
 
-              <div class="mt-4 pt-3 border-t border-slate-300/40 flex justify-between items-center gap-2">
-                <button onclick="startEditRecord(${recordIndex})" class="clay-btn-secondary px-3 py-1.5 text-xs font-bold text-slate-700 flex items-center gap-1">
-                  ✏️ Edit
-                </button>
-                <button onclick="openPrintModal(${recordIndex})" class="clay-btn-primary px-3 py-1.5 text-xs font-bold flex items-center gap-1">
-                  🖨️ PDF & Detail
-                </button>
+                <div class="mt-4 pt-3 border-t border-slate-300/40 flex justify-between items-center gap-2">
+                  <button onclick="startEditRecord(${recordIndex})" class="clay-btn-secondary px-3 py-1.5 text-xs font-bold text-slate-700 flex items-center gap-1">✏️ Edit</button>
+                  <button onclick="openPrintModal('receipt', ${recordIndex})" class="clay-btn-primary px-3 py-1.5 text-xs font-bold flex items-center gap-1">🖨️ PDF & Detail</button>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          } else {
+            const reportType = r['Jenis Laporan'] || 'Laporan';
+            let badgeStyle = 'bg-amber-100 text-amber-900';
+            if (reportType === 'Kehilangan') badgeStyle = 'bg-rose-100 text-rose-900';
+            if (reportType === 'Pelupusan') badgeStyle = 'bg-slate-200 text-slate-800';
+
+            grid.innerHTML += `
+              <div class="clay-card p-5 flex flex-col justify-between border-l-4 ${reportType === 'Kehilangan' ? 'border-l-rose-500' : (reportType === 'Kerosakan' ? 'border-l-amber-500' : 'border-l-slate-500')}">
+                <div>
+                  <div class="flex justify-between items-start gap-2 mb-2">
+                    <span class="text-[10px] font-black ${badgeStyle} px-2.5 py-1 rounded-full uppercase">⚠️ ${reportType}</span>
+                    <span class="text-[11px] font-extrabold text-slate-400">${r['Tarikh Kejadian'] || ''}</span>
+                  </div>
+                  <h3 class="font-black text-slate-900 text-sm leading-tight">${r['Nama Alatan']}</h3>
+                  <p class="text-xs text-rose-700 mt-2 font-bold">Kuantiti Terlibat: <strong class="text-sm font-black">${r['Kuantiti Terlibat']} Unit</strong></p>
+                  <p class="text-xs text-slate-500">Pelapor: ${r['Nama Pelapor']}</p>
+                </div>
+
+                ${thumb ? `<div class="mt-3 h-36 w-full clay-card-inner overflow-hidden border border-slate-200"><img src="${thumb}" class="w-full h-full object-cover"></div>` : ''}
+
+                <div class="mt-4 pt-3 border-t border-slate-300/40 flex justify-between items-center gap-2">
+                  <button onclick="startEditReport(${recordIndex})" class="clay-btn-secondary px-3 py-1.5 text-xs font-bold text-slate-700 flex items-center gap-1">✏️ Edit</button>
+                  <button onclick="openPrintModal('report', ${recordIndex})" class="clay-btn-danger px-3 py-1.5 text-xs font-bold flex items-center gap-1">🖨️ PDF Laporan</button>
+                </div>
+              </div>
+            `;
+          }
         });
       };
 
-      window.openPrintModal = function(index) {
-        const r = allRecords[index];
+      window.openPrintModal = function(type, index) {
+        const isReceipt = (type === 'receipt');
+        const r = isReceipt ? allRecords[index] : allReports[index];
         if (!r) return;
 
+        document.getElementById('printDocTitle').textContent = isReceipt ? 'BORANG REKOD PENERIMAAN ALATAN KOKURIKULUM' : `BORANG PELAPORAN ${r['Jenis Laporan'] ? r['Jenis Laporan'].toUpperCase() : 'STATUS'} ALATAN KOKURIKULUM`;
         document.getElementById('printCategory').textContent = r['Kategori'] || 'Lain-Lain';
-        document.getElementById('printId').textContent = r['ID Rekod'] || '-';
-        document.getElementById('printDate').textContent = r['Tarikh Terima'] || '-';
-        document.getElementById('printRecipient').textContent = r['Nama Penerima'] || '-';
+        document.getElementById('printId').textContent = (isReceipt ? r['ID Rekod'] : r['ID Laporan']) || '-';
+        
+        document.getElementById('printLabelDate').textContent = isReceipt ? 'Tarikh Diterima:' : 'Tarikh Kejadian:';
+        document.getElementById('printDate').textContent = (isReceipt ? r['Tarikh Terima'] : r['Tarikh Kejadian']) || '-';
+        
+        document.getElementById('printLabelUser').textContent = isReceipt ? 'Nama Penerima:' : 'Nama Pelapor:';
+        document.getElementById('printRecipient').textContent = (isReceipt ? r['Nama Penerima'] : r['Nama Pelapor']) || '-';
+        
         document.getElementById('printTimestamp').textContent = r['Tarikh/Masa Direkod'] || '-';
         document.getElementById('printItemName').textContent = r['Nama Alatan'] || '-';
-        document.getElementById('printQty').textContent = (r['Kuantiti'] || '0') + ' Unit';
+        document.getElementById('printQty').textContent = (isReceipt ? r['Kuantiti'] : r['Kuantiti Terlibat']) + ' Unit';
         document.getElementById('printNotes').textContent = r['Catatan'] || 'Tiada catatan tambahan.';
 
         const imgsGrid = document.getElementById('printImagesGrid');
         imgsGrid.innerHTML = '';
-        
         const imgs = getRecordImages(r);
 
         if (imgs.length > 0) {
-          imgs.forEach((url, i) => {
+          imgs.forEach((url) => {
             imgsGrid.innerHTML += `
               <div class="h-36 clay-card-inner overflow-hidden border border-slate-300 bg-white p-1">
                 <img src="${url}" class="w-full h-full object-cover rounded-lg">
@@ -768,13 +1012,15 @@
         window.print();
       };
 
-      function setTodayDate() {
+      function setTodayDates() {
         const now = new Date();
         const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
         document.getElementById('receivedDate').value = local;
+        document.getElementById('reportEventDate').value = local;
       }
 
-      setTodayDate();
+      setTodayDates();
+      loadDashboardData();
     })();
   </script>
 </body>
